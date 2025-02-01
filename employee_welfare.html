@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Employee & Welfare Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f7fc;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        h2 {
+            text-align: center;
+            color: #1e3a8a;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        .btn {
+            width: 100%;
+            background: #1e3a8a;
+            color: #fff;
+            padding: 12px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 5px;
+        }
+        .btn:hover {
+            background: #163177;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background: #1e3a8a;
+            color: #fff;
+        }
+        .total {
+            margin-top: 15px;
+            text-align: right;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .action-btn {
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            margin: 2px;
+            border-radius: 5px;
+        }
+        .update {
+            background: #f39c12;
+            color: white;
+        }
+        .delete {
+            background: #e74c3c;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Employee Management -->
+    <div class="container">
+        <h2>Employee Management</h2>
+
+        <div class="input-group">
+            <label for="name">Employee Name:</label>
+            <input type="text" id="name" placeholder="Enter employee name">
+        </div>
+        
+        <div class="input-group">
+            <label for="position">Position:</label>
+            <input type="text" id="position" placeholder="Enter job position">
+        </div>
+
+        <div class="input-group">
+            <label for="salary">Salary:</label>
+            <input type="number" id="salary" placeholder="Enter salary">
+        </div>
+
+        <button class="btn" onclick="addEmployee()">Add Employee</button>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Salary</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="employeeTable"></tbody>
+        </table>
+
+        <p class="total">Total Salary: ₹<span id="totalSalary">0</span></p>
+    </div>
+
+    <!-- Welfare Benefits -->
+    <div class="container">
+        <h2>Employee Welfare Programs</h2>
+
+        <div class="input-group">
+            <label for="welfare">Welfare Program:</label>
+            <input type="text" id="welfare" placeholder="Enter welfare benefit">
+        </div>
+
+        <button class="btn" onclick="addWelfare()">Add Welfare Benefit</button>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Welfare Benefit</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="welfareTable"></tbody>
+        </table>
+
+        <p class="total">Total Welfare Programs: <span id="totalWelfare">0</span></p>
+    </div>
+
+    <script>
+        let totalSalary = 0;
+        let welfareCount = 0;
+
+        function addEmployee() {
+            let name = document.getElementById("name").value;
+            let position = document.getElementById("position").value;
+            let salary = parseFloat(document.getElementById("salary").value);
+
+            if (!name || !position || isNaN(salary) || salary <= 0) {
+                alert("Please enter valid details!");
+                return;
+            }
+
+            let table = document.getElementById("employeeTable");
+            let row = table.insertRow();
+            row.insertCell(0).innerText = name;
+            row.insertCell(1).innerText = position;
+            row.insertCell(2).innerText = `₹${salary}`;
+
+            let actions = row.insertCell(3);
+            actions.innerHTML = `<button class="action-btn update" onclick="updateEmployee(this)">Update</button>
+                                 <button class="action-btn delete" onclick="deleteEmployee(this, ${salary})">Delete</button>`;
+
+            totalSalary += salary;
+            document.getElementById("totalSalary").innerText = totalSalary;
+
+            document.getElementById("name").value = "";
+            document.getElementById("position").value = "";
+            document.getElementById("salary").value = "";
+        }
+
+        function deleteEmployee(button, salary) {
+            let row = button.parentNode.parentNode;
+            row.remove();
+            totalSalary -= salary;
+            document.getElementById("totalSalary").innerText = totalSalary;
+        }
+
+        function updateEmployee(button) {
+            let row = button.parentNode.parentNode;
+            let name = row.cells[0].innerText;
+            let position = row.cells[1].innerText;
+            let salary = parseFloat(row.cells[2].innerText.replace("₹", ""));
+
+            document.getElementById("name").value = name;
+            document.getElementById("position").value = position;
+            document.getElementById("salary").value = salary;
+            row.remove();
+        }
+
+        function addWelfare() {
+            let welfare = document.getElementById("welfare").value;
+            if (!welfare) {
+                alert("Please enter a welfare benefit!");
+                return;
+            }
+
+            let table = document.getElementById("welfareTable");
+            let row = table.insertRow();
+            row.insertCell(0).innerText = welfare;
+
+            let actions = row.insertCell(1);
+            actions.innerHTML = `<button class="action-btn update" onclick="updateWelfare(this)">Update</button>
+                                 <button class="action-btn delete" onclick="deleteWelfare(this)">Delete</button>`;
+
+            welfareCount++;
+            document.getElementById("totalWelfare").innerText = welfareCount;
+            document.getElementById("welfare").value = "";
+        }
+
+        function deleteWelfare(button) {
+            button.parentNode.parentNode.remove();
+            welfareCount--;
+            document.getElementById("totalWelfare").innerText = welfareCount;
+        }
+
+        function updateWelfare(button) {
+            let row = button.parentNode.parentNode;
+            document.getElementById("welfare").value = row.cells[0].innerText;
+            row.remove();
+        }
+    </script>
+
+</body>
+</html>
